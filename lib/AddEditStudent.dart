@@ -29,25 +29,6 @@ import 'package:test1/studentModel.dart';
 
 
 
-Future<List<Student>> addStudent(String name, String schoolName,int age, int contactNumber) async {
-  final response = await http.post(
-    Uri.parse("https://fierce-citadel-10341.herokuapp.com/postStudentDetail"),
-    body: {
-      'name': name,
-      'schoolName':schoolName,
-       "age":age,
-       "contactNumber":contactNumber
-    });
-
-  if (response.statusCode == 201) {
-    List jsonResponse =  json.decode(response.body);
-    return jsonResponse.map((data) => Student.fromJson(data)).toList();
-  } else {
-    throw Exception('Failed to create album.');
-  }
-}
-
-
 
 class AddEditStudent extends StatefulWidget {
   @override
@@ -55,8 +36,33 @@ class AddEditStudent extends StatefulWidget {
 }
 
 class _AddEditStudentState extends State<AddEditStudent> {
+
+
+  Future<List<Student>> addStudent(String name, String schoolName,int age, int contactNumber) async {
+    final response = await http.post(
+        Uri.parse("https://fierce-citadel-10341.herokuapp.com/postStudentDetail"),
+      //  headers: {"Content-Type": "application/json"},
+        body: {
+          'name': userNameController.text,
+          'schoolName':schoolNameController.text,
+          "age":ageController.text,
+          "contactNumber":contactNumberController.text
+        });
+
+    if (response.statusCode == 201) {
+      List jsonResponse =  json.decode(response.body);
+      return jsonResponse.map((data) => Student.fromJson(data)).toList();
+    } else {
+      throw Exception('Failed to create album.');
+    }
+  }
+
+
   Future <List<Student>> futureData;
-  TextEditingController userNameController,schoolNameController,contactNumberController,ageController;
+  TextEditingController userNameController =  TextEditingController();
+      TextEditingController schoolNameController =  TextEditingController();
+      TextEditingController contactNumberController = TextEditingController();
+      TextEditingController ageController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +131,7 @@ class _AddEditStudentState extends State<AddEditStudent> {
                   color: Colors.deepPurple,
                 ),
                 margin: EdgeInsets.symmetric(vertical: 20),
-                padding: EdgeInsets.symmetric(vertical: 13),
+                padding: EdgeInsets.symmetric(vertical: 5),
                 child: MaterialButton(onPressed: (){
                   setState(() {
                     print("this is my post datakkkk ${futureData}");
@@ -133,7 +139,7 @@ class _AddEditStudentState extends State<AddEditStudent> {
 
                   });
                   print("final print ${futureData}");
-                }, child: Text("Add",style: TextStyle(color: Colors.white),),))
+                }, child: Text("Add",style: TextStyle(color: Colors.white,fontSize: 20),), ))
           ],
         )
       ),

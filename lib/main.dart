@@ -85,12 +85,12 @@ class _HomePageState extends State<HomePage> {
                     },
                     child: Card(
                       child: Container(
-                        padding: EdgeInsets.all(16),
+                        padding: EdgeInsets.symmetric(vertical:10,horizontal: 12),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              data[i].studentName.toString(),style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500)
+                              data[i].studentName.toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500)
                             ),
 
                             Container(

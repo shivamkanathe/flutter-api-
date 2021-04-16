@@ -33,8 +33,8 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(child: Text("Student Name :-",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),)),
-                   Expanded(child: Text(widget.mydata.studentName.toString(),style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500),)),
+                  Expanded(child: Text("Student Name :-",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500),)),
+                   Expanded(child: Text(widget.mydata.studentName.toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500),)),
                 ],
               ),
             ),
@@ -46,8 +46,8 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Expanded(child: Text("School Name :-",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500))),
-                  Expanded(child: Text(widget.mydata.schoolName.toString(),style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500))),
+                   Expanded(child: Text("School Name :-",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
+                  Expanded(child: Text(widget.mydata.schoolName.toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
                 ],
               ),
             ),
@@ -59,8 +59,8 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(child: Text("Contact Number :-",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500))),
-                  Expanded(child: Text(widget.mydata.contactNumber.toString(),style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500))),
+                  Expanded(child: Text("Contact Number :-",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
+                  Expanded(child: Text(widget.mydata.contactNumber.toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
                 ],
               ),
             ),
@@ -72,8 +72,8 @@ class _StudentDetailPageState extends State<StudentDetailPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(child: Text("Age :-",style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500))),
-                  Expanded(child: Text(widget.mydata.age.toString(),style: TextStyle(fontSize: 16,fontWeight: FontWeight.w500))),
+                  Expanded(child: Text("Age :-",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
+                  Expanded(child: Text(widget.mydata.age.toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500))),
                 ],
               ),
             ),
