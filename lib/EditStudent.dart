@@ -7,20 +7,23 @@ import 'package:http/http.dart' as http;
 import 'package:test1/Util.dart';
 import 'package:test1/studentModel.dart';
 
-class AddEditStudent extends StatefulWidget {
+class EditStudent extends StatefulWidget {
+  final Student mydata;
+  EditStudent({this.mydata});
   @override
-  _AddEditStudentState createState() => _AddEditStudentState();
+  _EditStudentState createState() => _EditStudentState();
 }
 
-class _AddEditStudentState extends State<AddEditStudent> {
+class _EditStudentState extends State<EditStudent> {
   TextEditingController userNameController = TextEditingController();
   TextEditingController schoolNameController = TextEditingController();
   TextEditingController contactNumberController = TextEditingController();
   TextEditingController agecontroller = TextEditingController();
 
-  Future addStudent(
-      String name, String schoolName, int contactNumber, int age) async {
-    var url = "https://fierce-citadel-10341.herokuapp.com/postStudentDetail";
+  Future updateStudent(String name, String schoolName, int contactNumber,
+      int age, String studentId) async {
+    var url =
+        "https://fierce-citadel-10341.herokuapp.com/updateStudentById/$studentId";
     var bodyData = json.encode({
       "name": name,
       "schoolName": schoolName,
@@ -28,14 +31,14 @@ class _AddEditStudentState extends State<AddEditStudent> {
       "age": age,
     });
 
-    var response = await http.post(Uri.parse(url),
+    var response = await http.patch(Uri.parse(url),
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json"
         },
         body: bodyData);
     if (response.statusCode == 200) {
-      var message = "Data uploaded successfully ";
+      var message = "Student updated successfully ";
       showMessage(context, message);
       setState(() {
         userNameController.text = "";
@@ -56,7 +59,7 @@ class _AddEditStudentState extends State<AddEditStudent> {
     // print("work data post ${futureData}");
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add Student"),
+        title: Text("Edit Student"),
         centerTitle: true,
       ),
       body: Container(
@@ -70,7 +73,7 @@ class _AddEditStudentState extends State<AddEditStudent> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(13),
                   ),
-                  hintText: "Enter student name",
+                  hintText: "${widget.mydata.studentName}",
                   hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
               ),
@@ -83,7 +86,7 @@ class _AddEditStudentState extends State<AddEditStudent> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(13),
                   ),
-                  hintText: "Enter schoolName",
+                  hintText: "${widget.mydata.schoolName}",
                   hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
               ),
@@ -94,7 +97,7 @@ class _AddEditStudentState extends State<AddEditStudent> {
                 controller: contactNumberController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  hintText: "Enter contactNumber",
+                  hintText: "${widget.mydata.contactNumber}",
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(13),
                       borderSide: BorderSide(color: Colors.grey)),
@@ -108,7 +111,7 @@ class _AddEditStudentState extends State<AddEditStudent> {
                 keyboardType: TextInputType.number,
                 controller: agecontroller,
                 decoration: InputDecoration(
-                  hintText: "Enter student age",
+                  hintText: "${widget.mydata.age}",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(13),
                   ),
@@ -116,7 +119,6 @@ class _AddEditStudentState extends State<AddEditStudent> {
                 ),
               ),
               Container(
-                width: MediaQuery.of(context).size.width/3,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(13),
                     color: Colors.deepPurple,
@@ -125,17 +127,17 @@ class _AddEditStudentState extends State<AddEditStudent> {
                   padding: EdgeInsets.symmetric(vertical: 5),
                   child: MaterialButton(
                     onPressed: () {
-                      setState(() {
-                        addStudent(
-                            userNameController.text,
-                            schoolNameController.text,
-                            (int.parse(contactNumberController.text)),
-                            (int.parse(agecontroller.text)));
-                        // print("this is add data ${addStudent()}");
-                      });
+                       setState(() {
+                         updateStudent(
+                             userNameController.text,
+                             schoolNameController.text,
+                             (int.parse(contactNumberController.text)),
+                             (int.parse(agecontroller.text)),
+                             widget.mydata.id);
+                       });
                     },
                     child: Text(
-                      "Add",
+                      "Update",
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   ))

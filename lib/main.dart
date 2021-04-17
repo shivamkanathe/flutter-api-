@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:test1/AddEditStudent.dart';
+import 'package:test1/EditStudent.dart';
 import 'package:test1/StudentDetailPage.dart';
+import 'package:test1/Util.dart';
 import 'package:test1/studentModel.dart';
 
 void main() {
@@ -27,49 +29,64 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
-
-// fetch all student
-Future<List<Student>> fetchStudent() async {
-  final response = await http.get(Uri.parse("https://fierce-citadel-10341.herokuapp.com/getAllStudents"));
-  if (response.statusCode == 200) {
-     List jsonResponse =  json.decode(response.body);
-     return jsonResponse.map((data) => Student.fromJson(data)).toList();
-  } else {
-    throw Exception('Failed to load post');
-  }
-}
-
-
-Future<List<Student>> deleteAlbum(dynamic studentId) async {
-  final http.Response response = await http.delete(
-    Uri.parse('https://fierce-citadel-10341.herokuapp.com/deleteStudentById/$studentId'),
-    body: {
-      "_id": studentId,
-    }
-  );
-  if (response.statusCode == 200) {
-    List jsonResponse =  json.decode(response.body);
-    return jsonResponse.map((data) => Student.fromJson(data)).toList();
-  } else {
-    throw Exception('Failed to delete album.');
-  }
-}
-
-
-
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  Future <List<Student>> futureData;
+  // Future <List<Student>> futureData;
+
+  final String url =
+      "https://fierce-citadel-10341.herokuapp.com/getAllStudents";
+
+  List<Student> myAllData = [];
+
+  Future<Student> futureData;
+
   @override
   void initState() {
     super.initState();
-    futureData = fetchStudent();
+    loadStudents();
   }
+
+  Future loadStudents() async {
+    var response =
+        await http.get(Uri.parse(url), headers: {"Accept": "application/json"});
+    if (response.statusCode == 200) {
+      String responseBody = response.body;
+      var jsonBody = json.decode(responseBody);
+      for (var data in jsonBody) {
+        myAllData.add(Student(
+            studentName: data['name'],
+            id: data['_id'],
+            schoolName: data['schoolName'],
+            contactNumber: data['contactNumber'],
+            age: data['age']));
+      }
+      setState(() {});
+      myAllData.forEach((element) => print("Name :-  ${element.studentName}"));
+    } else {
+      print("some thing went wrong");
+    }
+  }
+
+  Future deleteStudent(String studentId) async {
+    final http.Response response = await http.delete(
+      Uri.parse(
+          'https://fierce-citadel-10341.herokuapp.com/deleteStudentById/$studentId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return Student.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to delete album.');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,65 +96,78 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: (){
-          Navigator.push(context,MaterialPageRoute(builder: (context)=>AddEditStudent()));
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => AddEditStudent()));
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: Container(
-        child:FutureBuilder<List<Student>>(
-            future: futureData,
-          builder:(context,snapshot){
-            if(snapshot.hasData){
-              List<Student> data = snapshot.data;
-
-              return ListView.builder(
-                itemCount:data.length,
-                itemBuilder:(c,i){
-                 // print("this is data ${data[i].id}");
+        child: myAllData.length != 0
+            ? ListView.builder(
+                itemCount: myAllData.length,
+                itemBuilder: (c, i) {
                   return InkWell(
-                    onTap: (){
-                      Navigator.push(context,MaterialPageRoute(builder: (context)=>StudentDetailPage(mydata: data[i],)));
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  StudentDetailPage(mydata: myAllData[i])));
                     },
                     child: Card(
                       child: Container(
-                        padding: EdgeInsets.symmetric(vertical:10,horizontal: 12),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              data[i].studentName.toString(),style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500)
-                            ),
-
+                            Text(myAllData[i].studentName,
+                                style: TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.w500)),
                             Container(
                               child: Row(
                                 children: [
-                                  IconButton(icon: Icon(Icons.edit,color: Colors.blue,), onPressed:(){}),
-                                  IconButton(icon: Icon(Icons.delete,color: Colors.red,), onPressed:(){
-                                    setState(() {
-                                      print("before ${futureData}");
-                                      futureData = deleteAlbum(data[i].id);
-                                   //   print("after ${data[i].id}");
-                                    });
-                                  }),
+                                  IconButton(
+                                      icon: Icon(
+                                        Icons.edit,
+                                        color: Colors.blue,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    EditStudent(
+                                                      mydata: myAllData[i],
+                                                    )));
+                                      }),
+                                  IconButton(
+                                      icon: Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      ),
+                                      onPressed: () {
+                                        var message =
+                                            "Student deleted successfully ";
+                                        showMessage(context, message);
+                                        setState(() {
+                                          deleteStudent(
+                                              myAllData[i].id.toString());
+                                        });
+                                      }),
                                 ],
                               ),
                             ),
-
                           ],
                         ),
                       ),
                     ),
                   );
-                }
-              );
-            }
-            else if(snapshot.hasError){
-              return Text("${snapshot.error}");
-            }
-            return Center(child: CircularProgressIndicator());
-          }
-        )
+                })
+            : Center(
+                child: CircularProgressIndicator(),
+              ),
       ),
     );
   }
