@@ -39,15 +39,16 @@ class _AddEditStudentState extends State<AddEditStudent> {
 
 
   Future<List<Student>> addStudent(String name, String schoolName,int age, int contactNumber) async {
+
     final response = await http.post(
         Uri.parse("https://fierce-citadel-10341.herokuapp.com/postStudentDetail"),
-      //  headers: {"Content-Type": "application/json"},
         body: {
           'name': userNameController.text,
           'schoolName':schoolNameController.text,
           "age":ageController.text,
           "contactNumber":contactNumberController.text
         });
+
 
     if (response.statusCode == 201) {
       List jsonResponse =  json.decode(response.body);

@@ -28,15 +28,31 @@ class MyApp extends StatelessWidget {
 }
 
 
+
+// fetch all student
 Future<List<Student>> fetchStudent() async {
-
   final response = await http.get(Uri.parse("https://fierce-citadel-10341.herokuapp.com/getAllStudents"));
-
   if (response.statusCode == 200) {
      List jsonResponse =  json.decode(response.body);
      return jsonResponse.map((data) => Student.fromJson(data)).toList();
   } else {
     throw Exception('Failed to load post');
+  }
+}
+
+
+Future<List<Student>> deleteAlbum(dynamic studentId) async {
+  final http.Response response = await http.delete(
+    Uri.parse('https://fierce-citadel-10341.herokuapp.com/deleteStudentById/$studentId'),
+    body: {
+      "_id": studentId,
+    }
+  );
+  if (response.statusCode == 200) {
+    List jsonResponse =  json.decode(response.body);
+    return jsonResponse.map((data) => Student.fromJson(data)).toList();
+  } else {
+    throw Exception('Failed to delete album.');
   }
 }
 
@@ -56,7 +72,6 @@ class _HomePageState extends State<HomePage> {
   }
   @override
   Widget build(BuildContext context) {
-  print("ok");
     return Scaffold(
       appBar: AppBar(
         title: Text("Student Management System"),
@@ -75,10 +90,11 @@ class _HomePageState extends State<HomePage> {
           builder:(context,snapshot){
             if(snapshot.hasData){
               List<Student> data = snapshot.data;
-              // print("this is data ${snapshot.data}");
+
               return ListView.builder(
                 itemCount:data.length,
                 itemBuilder:(c,i){
+                 // print("this is data ${data[i].id}");
                   return InkWell(
                     onTap: (){
                       Navigator.push(context,MaterialPageRoute(builder: (context)=>StudentDetailPage(mydata: data[i],)));
@@ -97,7 +113,13 @@ class _HomePageState extends State<HomePage> {
                               child: Row(
                                 children: [
                                   IconButton(icon: Icon(Icons.edit,color: Colors.blue,), onPressed:(){}),
-                                  IconButton(icon: Icon(Icons.delete,color: Colors.red,), onPressed:(){}),
+                                  IconButton(icon: Icon(Icons.delete,color: Colors.red,), onPressed:(){
+                                    setState(() {
+                                      print("before ${futureData}");
+                                      futureData = deleteAlbum(data[i].id);
+                                   //   print("after ${data[i].id}");
+                                    });
+                                  }),
                                 ],
                               ),
                             ),
