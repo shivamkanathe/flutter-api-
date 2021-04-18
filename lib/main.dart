@@ -97,16 +97,12 @@ class _HomePageState extends State<HomePage> {
   //   return completer.future;
   // }
 
-  Future<void> _onRefresh() async {
-    refreshKey.currentState?.show(atTop: false);
-    await Future.delayed(Duration(seconds: 2));
-
-    setState(() {
-      loadStudents();
-    });
-
-    return null;
-  }
+  // Future<void> _onRefresh() async {
+  //   refreshKey.currentState?.show(atTop: false);
+  //   await Future.delayed(Duration(seconds: 2));
+  //     loadStudents();
+  //   return null;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +122,7 @@ class _HomePageState extends State<HomePage> {
       body: Container(
         child: myAllData.length != 0
             ? RefreshIndicator(
-            onRefresh:()=> _onRefresh(),
+            onRefresh:()=> Future.delayed(const Duration(seconds: 3)),
               child: ListView.builder(
                   physics: AlwaysScrollableScrollPhysics(),
                   itemCount: myAllData.length,
