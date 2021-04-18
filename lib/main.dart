@@ -173,7 +173,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                         onPressed: () {
                                           var message =
-                                              "Student deleted successfully ";
+                                              "Are you sure want to delete student?";
                                           showMessage(context, message);
                                           setState(() {
                                             deleteStudent(
