@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -35,6 +36,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
   // Future <List<Student>> futureData;
 
   final String url =
@@ -87,6 +89,25 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // Future<Null>_onRefresh() {
+  //   Completer<Null> completer = new Completer<Null>();
+  //   Timer timer = new Timer(new Duration(seconds: 3), () {
+  //     completer.complete();
+  //   });
+  //   return completer.future;
+  // }
+
+  Future<void> _onRefresh() async {
+    refreshKey.currentState?.show(atTop: false);
+    await Future.delayed(Duration(seconds: 2));
+
+    setState(() {
+      loadStudents();
+    });
+
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,67 +125,71 @@ class _HomePageState extends State<HomePage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: Container(
         child: myAllData.length != 0
-            ? ListView.builder(
-                itemCount: myAllData.length,
-                itemBuilder: (c, i) {
-                  return InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  StudentDetailPage(mydata: myAllData[i])));
-                    },
-                    child: Card(
-                      child: Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(myAllData[i].studentName,
-                                style: TextStyle(
-                                    fontSize: 15, fontWeight: FontWeight.w500)),
-                            Container(
-                              child: Row(
-                                children: [
-                                  IconButton(
-                                      icon: Icon(
-                                        Icons.edit,
-                                        color: Colors.blue,
-                                      ),
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    EditStudent(
-                                                      mydata: myAllData[i],
-                                                    )));
-                                      }),
-                                  IconButton(
-                                      icon: Icon(
-                                        Icons.delete,
-                                        color: Colors.red,
-                                      ),
-                                      onPressed: () {
-                                        var message =
-                                            "Student deleted successfully ";
-                                        showMessage(context, message);
-                                        setState(() {
-                                          deleteStudent(
-                                              myAllData[i].id.toString());
-                                        });
-                                      }),
-                                ],
+            ? RefreshIndicator(
+            onRefresh:()=> _onRefresh(),
+              child: ListView.builder(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  itemCount: myAllData.length,
+                  itemBuilder: (c, i) {
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    StudentDetailPage(mydata: myAllData[i])));
+                      },
+                      child: Card(
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(myAllData[i].studentName,
+                                  style: TextStyle(
+                                      fontSize: 15, fontWeight: FontWeight.w500)),
+                              Container(
+                                child: Row(
+                                  children: [
+                                    IconButton(
+                                        icon: Icon(
+                                          Icons.edit,
+                                          color: Colors.blue,
+                                        ),
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      EditStudent(
+                                                        mydata: myAllData[i],
+                                                      )));
+                                        }),
+                                    IconButton(
+                                        icon: Icon(
+                                          Icons.delete,
+                                          color: Colors.red,
+                                        ),
+                                        onPressed: () {
+                                          var message =
+                                              "Student deleted successfully ";
+                                          showMessage(context, message);
+                                          setState(() {
+                                            deleteStudent(
+                                                myAllData[i].id.toString());
+                                          });
+                                        }),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                })
+                    );
+                  }),
+            )
             : Center(
                 child: CircularProgressIndicator(),
               ),

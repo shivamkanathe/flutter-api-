@@ -18,8 +18,8 @@ class _AddEditStudentState extends State<AddEditStudent> {
   TextEditingController contactNumberController = TextEditingController();
   TextEditingController agecontroller = TextEditingController();
 
-  Future addStudent(
-      String name, String schoolName, int contactNumber, int age) async {
+
+  Future addStudent( String name, String schoolName, int contactNumber, int age) async {
     var url = "https://fierce-citadel-10341.herokuapp.com/postStudentDetail";
     var bodyData = json.encode({
       "name": name,
@@ -34,8 +34,9 @@ class _AddEditStudentState extends State<AddEditStudent> {
           "Accept": "application/json"
         },
         body: bodyData);
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200){
       var message = "Data uploaded successfully ";
+
       showMessage(context, message);
       setState(() {
         userNameController.text = "";
@@ -115,30 +116,29 @@ class _AddEditStudentState extends State<AddEditStudent> {
                   hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
               ),
-              Container(
-                width: MediaQuery.of(context).size.width/3,
+
+              InkWell(
+                onTap: (){
+                  setState(() {
+                    addStudent(
+                        userNameController.text,
+                        schoolNameController.text,
+                        (int.parse(contactNumberController.text)),
+                        (int.parse(agecontroller.text)));
+                  });
+                },
+                child: Container(
+                  margin: EdgeInsets.only(top: 30),
+                  height: 50,
+                  width: MediaQuery.of(context).size.width/6,
+                  alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(13),
                     color: Colors.deepPurple,
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  margin: EdgeInsets.symmetric(vertical: 20),
-                  padding: EdgeInsets.symmetric(vertical: 5),
-                  child: MaterialButton(
-                    onPressed: () {
-                      setState(() {
-                        addStudent(
-                            userNameController.text,
-                            schoolNameController.text,
-                            (int.parse(contactNumberController.text)),
-                            (int.parse(agecontroller.text)));
-                        // print("this is add data ${addStudent()}");
-                      });
-                    },
-                    child: Text(
-                      "Add",
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    ),
-                  ))
+                  child: Text("Add", textAlign:TextAlign.center ,style: TextStyle(color: Colors.white, fontSize: 20),),
+                ),
+              ),
             ],
           )),
     );

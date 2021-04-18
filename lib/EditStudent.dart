@@ -15,13 +15,15 @@ class EditStudent extends StatefulWidget {
 }
 
 class _EditStudentState extends State<EditStudent> {
+
+  bool isLoading = false;
+
   TextEditingController userNameController = TextEditingController();
   TextEditingController schoolNameController = TextEditingController();
   TextEditingController contactNumberController = TextEditingController();
   TextEditingController agecontroller = TextEditingController();
 
-  Future updateStudent(String name, String schoolName, int contactNumber,
-      int age, String studentId) async {
+  Future updateStudent(String name, String schoolName, int contactNumber, int age, String studentId) async {
     var url =
         "https://fierce-citadel-10341.herokuapp.com/updateStudentById/$studentId";
     var bodyData = json.encode({
@@ -29,6 +31,7 @@ class _EditStudentState extends State<EditStudent> {
       "schoolName": schoolName,
       "contactNumber": contactNumber,
       "age": age,
+      "_id": studentId,
     });
 
     var response = await http.patch(Uri.parse(url),
@@ -52,6 +55,26 @@ class _EditStudentState extends State<EditStudent> {
       showMessage(context, messageError);
       throw Exception("Something gone wrong");
     }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    getStudent();
+  }
+
+  getStudent()async{
+    setState(() {
+      isLoading = true;
+    });
+    Student myDetail =  await (widget.mydata);
+    userNameController.text =  myDetail.studentName.toString();
+    schoolNameController.text =  myDetail.schoolName.toString();
+    contactNumberController.text =  myDetail.contactNumber.toString();
+    agecontroller.text =  myDetail.age.toString();
+    setState(() {
+      isLoading =  false;
+    });
   }
 
   @override
@@ -118,29 +141,31 @@ class _EditStudentState extends State<EditStudent> {
                   hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
               ),
-              Container(
+
+              InkWell(
+                onTap: (){
+                  setState(() {
+                    updateStudent(
+                                  userNameController.text == widget.mydata.studentName ? widget.mydata.studentName : userNameController.text.toString(),
+                                  schoolNameController.text == widget.mydata.schoolName ?widget.mydata.schoolName : schoolNameController.text.toString(),
+                                  (int.parse(contactNumberController.text == widget.mydata.contactNumber ? widget.mydata.contactNumber : contactNumberController.text)),
+                                  (int.parse(agecontroller.text == widget.mydata.age ? widget.mydata.age : agecontroller.text)),
+                                  widget.mydata.id);
+                  });
+                },
+                child: Container(
+                  margin: EdgeInsets.only(top: 30),
+                  height: 50,
+                  width: MediaQuery.of(context).size.width/6,
+                  alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(13),
                     color: Colors.deepPurple,
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  margin: EdgeInsets.symmetric(vertical: 20),
-                  padding: EdgeInsets.symmetric(vertical: 5),
-                  child: MaterialButton(
-                    onPressed: () {
-                       setState(() {
-                         updateStudent(
-                             userNameController.text,
-                             schoolNameController.text,
-                             (int.parse(contactNumberController.text)),
-                             (int.parse(agecontroller.text)),
-                             widget.mydata.id);
-                       });
-                    },
-                    child: Text(
-                      "Update",
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    ),
-                  ))
+                  child: Text("Update", textAlign:TextAlign.center ,style: TextStyle(color: Colors.white, fontSize: 20),),
+                ),
+              ),
+
             ],
           )),
     );
